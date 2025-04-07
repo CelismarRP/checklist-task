@@ -132,7 +132,7 @@
 <div class="flex justify-between gap-4">
   <button type="button" onclick="copiarParaClipboard()"
           class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-    Copiar para a Memória
+    Copiar
   </button>
 
   <button type="button" onclick="enviarParaAzure()"
@@ -215,7 +215,7 @@
     const body = JSON.stringify({ id, texto, usuario });
 
     try {
-      const response = await fetch("https://producao4.theos.com.br/eclesialtheossystem/api/v1/Integracao/addcomments/", {
+      const response = await fetch("https://cors-anywhere.herokuapp.com/https://producao4.theos.com.br/eclesialtheossystem/api/v1/Integracao/addcomments/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body
