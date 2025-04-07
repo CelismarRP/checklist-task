@@ -1,0 +1,237 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checklist Dev - Finalização</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <div class="max-w-4xl mx-auto p-6 mt-8 bg-white rounded-xl shadow-lg space-y-6">
+    <h1 class="text-2xl font-bold text-center text-blue-600">Checklist de Finalização de Tarefa</h1>
+    
+    <form id="checklistForm" class="space-y-6">
+      <!-- Info básica -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block font-semibold">Desenvolvedor</label>
+          <input type="text" name="dev" class="w-full border p-2 rounded"
+                 placeholder="Nome do desenvolvedor responsável pela entrega."
+                 title="Nome do desenvolvedor responsável pela entrega." required>
+        </div>
+        <div>
+          <label class="block font-semibold">Task (Azure)</label>
+          <input type="text" name="taskId" class="w-full border p-2 rounded"
+                 placeholder="Ex: 12345"
+                 title="Informe o número ou ID da tarefa no Azure (apenas números)." required>
+        </div>
+      </div>
+
+      <!-- Objetivo -->
+      <div>
+        <label class="block font-semibold">Qual era o objetivo da tarefa?</label>
+        <textarea name="objetivo" rows="3" class="w-full border p-2 rounded"
+          placeholder="Descreva de forma clara e sucinta o objetivo da tarefa."
+          title="Descreva de forma clara e sucinta qual era o objetivo principal da tarefa." required></textarea>
+      </div>
+
+      <!-- Mudanças -->
+      <div>
+        <label class="block font-semibold">Que mudanças foram feitas no código?</label>
+        <textarea name="alteracoes" rows="3" class="w-full border p-2 rounded"
+          placeholder='Especifique as mudanças feitas no código. Seja objetivo e mencione nomes de métodos, classes ou funções alteradas.'
+          title='Ex: Retirada função XYZ... Cálculo de determinada classe foi trocado por uma função já utilizada em outra... Descrevendo de maneira mais específica."'></textarea>
+      </div>
+
+      <div>
+        <label class="block font-semibold">Como a solução foi implementada?</label>
+        <textarea name="implementacao" rows="3" class="w-full border p-2 rounded"
+          placeholder='Explique em termos simples como a solução foi feita, mencionando decisões relevantes.'
+          title='Ex: "A rotina de cálculo ABC não estava levando em consideração o uso do parâmetro XYZ, então implementei para calcular de outra forma quando ele for ativado."'></textarea>
+      </div>
+
+      <div>
+        <label class="block font-semibold">Quais áreas do sistema foram impactadas por essa alteração?</label>
+        <textarea name="impacto" rows="3" class="w-full border p-2 rounded"
+          placeholder='Liste os módulos, rotinas ou partes do sistema que podem ser afetadas direta ou indiretamente por essa alteração.'
+          title="Exemplo: “A implementação da dedução de tal evento na função ABC pode impactar as rotinas de cálculo XYZ nas folhas de férias e mensal.”"></textarea>
+      </div>
+
+      <!-- É bug? -->
+      <div>
+        <label class="inline-flex items-center">
+          <input type="checkbox" id="chkBug" class="mr-2">Essa tarefa é uma correção de bug?
+        </label>
+        <div id="divBug" class="mt-2 hidden">
+          <label class="block font-semibold">Task que originou o problema:</label>
+          <input type="text" name="origemBug" class="w-full border p-2 rounded"
+                 placeholder="Essa informação é importante para testar a correção tanto no cenário atual quanto no cenário original, garantindo que a solução atenda ambas as situações."
+                 title="Se este bug foi originado por uma task anterior, informe o ID dela para o QA validar ambos os cenários.">
+        </div>
+      </div>
+
+      <!-- Escopo -->
+      <div>
+        <label class="inline-flex items-center">
+          <input type="checkbox" id="chkEscopo" class="mr-2"> Houve alteração no escopo da tarefa?
+        </label>
+        <div id="divEscopo" class="mt-2 hidden">
+          <label class="block font-semibold">Descreva a alteração:</label>
+          <textarea name="escopoAlterado" rows="2" class="w-full border p-2 rounded"
+            placeholder="Caso a tarefa tenha sido alterada ou se a descrição original da task não corresponder ao que foi realmente desenvolvido, informe as modificações no escopo e descreva o que foi desenvolvido além do previsto originalmente."
+            title="Informe o que foi alterado/desenvolvido além do escopo da task original."></textarea>
+        </div>
+      </div>
+
+      <!-- Documentação -->
+      <div>
+        <label class="block font-semibold">A documentação foi atualizada?</label>
+        <select id="selDoc" name="docAtualizada" class="w-full border p-2 rounded"
+                title="Se a tarefa afetou a documentação da regra de negócio ou dos casos de teste, e essas alterações impactaram o código, informe o responsável para que a documentação seja atualizada adequadamente.">
+          <option value="Não">Não</option>
+          <option value="Sim">Sim</option>
+        </select>
+        <div id="divResponsavelDoc" class="mt-2 hidden">
+          <label class="block font-semibold">Responsável pela atualização:</label>
+          <input type="text" name="responsavelDoc" class="w-full border p-2 rounded"
+                 placeholder="Nome do responsável"
+                 title="Informe quem deve atualizar ou atualizou a documentação.">
+        </div>
+      </div>
+
+      <!-- Riscos -->
+      <div>
+        <label class="inline-flex items-center">
+          <input type="checkbox" id="chkRiscos" class="mr-2">Há riscos conhecidos relacionados a essa implementação?
+        </label>
+        <div id="divRiscos" class="mt-2 hidden">
+          <label class="block font-semibold"> Descreva os riscos: </label>
+          <textarea name="riscos" rows="2" class="w-full border p-2 rounded"
+            placeholder="Se a alteração envolveu modificações em blocos de código ou funções críticas, como rotinas de cálculo ou emissões fiscais para o eSocial, descreva os possíveis riscos que podem surgir dessa implementação."
+            title="Indique riscos técnicos, funcionais ou sistêmicos que o QA deve estar atento."></textarea>
+
+          <label class="block font-semibold mt-2"> Existem cenários de teste adicionais não descritos na tarefa? </label>
+          <textarea name="cenariosQa" rows="2" class="w-full border p-2 rounded"
+            placeholder="Servidor, Banco de Simulação, Funcionário, Competência"
+            title="Caso tenha sido necessário testar em ambientes ou cenários não mencionados na task original, por favor, forneça os detalhes."></textarea>
+        </div>
+      </div>
+
+      <div>
+        <label class="block font-semibold mb-2">Checklist Final:</label>
+        <div class="grid grid-cols-2 gap-2">
+          <label><input type="checkbox" name="checklist" value="Código revisado" class="mr-2"> Código revisado</label>
+          <label><input type="checkbox" name="checklist" value="Testes realizados" class="mr-2"> Testes manuais realizados</label>
+          <label><input type="checkbox" name="checklist" value="Sem erros no log" class="mr-2"> Impacto analisado</label>
+          <label><input type="checkbox" name="checklist" value="Validação com dados reais" class="mr-2"> Validação com dados reais</label>
+          <label><input type="checkbox" name="checklist" value="QA informado" class="mr-2"> QA informado</label>
+          <label><input type="checkbox" name="checklist" value="Documentação atualizada" class="mr-2"> Documentação atualizada</label>
+        </div>
+      </div>
+
+<div class="flex justify-between gap-4">
+  <button type="button" onclick="copiarParaClipboard()"
+          class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+    Copiar para a Memória
+  </button>
+
+  <button type="button" onclick="enviarParaAzure()"
+          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+    Enviar para Azure
+  </button>
+</div>
+    </form>
+  </div>
+
+  <script>
+  document.getElementById("chkBug").addEventListener("change", function () {
+    document.getElementById("divBug").classList.toggle("hidden", !this.checked);
+  });
+  document.getElementById("chkEscopo").addEventListener("change", function () {
+    document.getElementById("divEscopo").classList.toggle("hidden", !this.checked);
+  });
+  document.getElementById("selDoc").addEventListener("change", function () {
+    document.getElementById("divResponsavelDoc").classList.toggle("hidden", this.value !== "Sim");
+  });
+  document.getElementById("chkRiscos").addEventListener("change", function () {
+    document.getElementById("divRiscos").classList.toggle("hidden", !this.checked);
+  });
+
+  function montarTextoComentario(data) {
+    const checklist = data.getAll("checklist");
+
+    let texto = '';
+    texto += `Objetivo da Tarefa: ${data.get("objetivo")}\n`;
+    texto += `Alterações no Código: ${data.get("alteracoes")}\n`;
+    texto += `Como a solução foi implementada: ${data.get("implementacao")}\n`;
+    texto += `Áreas Impactadas: ${data.get("impacto")}\n`;
+
+    if (data.get("origemBug"))
+      texto += `Task que originou o problema: ${data.get("origemBug")}\n`;
+
+    if (data.get("escopoAlterado"))
+      texto += `Alteração de Escopo: ${data.get("escopoAlterado")}\n`;
+
+    if (data.get("docAtualizada") === "Sim")
+      texto += `Documentação atualizada por: ${data.get("responsavelDoc")}\n`;
+
+    if (data.get("riscos"))
+      texto += `Riscos: ${data.get("riscos")}\n`;
+
+    if (data.get("cenariosQa"))
+      texto += `Cenários para o QA: ${data.get("cenariosQa")}\n`;
+
+    if (checklist.length > 0) {
+      texto += `Itens do Checklist:\n`;
+      checklist.forEach(item => texto += `- ${item}\n`);
+    }
+
+    return texto;
+  }
+
+  function copiarParaClipboard() {
+    const form = document.getElementById("checklistForm");
+    const data = new FormData(form);
+    const texto = montarTextoComentario(data);
+
+    navigator.clipboard.writeText(texto)
+      .then(() => alert("Informações copiadas para a memória!"))
+      .catch(err => alert("Erro ao copiar: " + err));
+  }
+
+  async function enviarParaAzure() {
+    const form = document.getElementById("checklistForm");
+    const data = new FormData(form);
+
+    const id = parseInt(data.get("taskId"));
+    const texto = montarTextoComentario(data);
+    const usuario = data.get("dev");
+
+    if (!id || !texto || !usuario) {
+      alert("Preencha todos os campos obrigatórios antes de enviar.");
+      return;
+    }
+
+    const body = JSON.stringify({ id, texto, usuario });
+
+    try {
+      const response = await fetch("https://producao4.theos.com.br/eclesialtheossystem/api/v1/Integracao/addcomments/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body
+      });
+
+      if (response.ok) {
+        alert("Comentário enviado com sucesso para o Azure!");
+      } else {
+        const erro = await response.text();
+        alert("Erro ao enviar para Azure:\n" + erro);
+      }
+    } catch (err) {
+      alert("Erro na comunicação com o servidor:\n" + err.message);
+    }
+  }
+</script>
+
+</body>
+</html>
