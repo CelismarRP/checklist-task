@@ -163,28 +163,28 @@
     const checklist = data.getAll("checklist");
 
     let texto = '';
-    texto += `Objetivo da Tarefa: ${data.get("objetivo")}\n`;
-    texto += `Alterações no Código: ${data.get("alteracoes")}\n`;
-    texto += `Como a solução foi implementada: ${data.get("implementacao")}\n`;
-    texto += `Áreas Impactadas: ${data.get("impacto")}\n`;
+    texto += `**Objetivo da Tarefa**: ${data.get("objetivo")}\n`;
+    texto += `**Alterações no Código**: ${data.get("alteracoes")}\n`;
+    texto += `**Como a solução foi implementada**: ${data.get("implementacao")}\n`;
+    texto += `**Áreas Impactadas**: ${data.get("impacto")}\n`;
 
     if (data.get("origemBug"))
-      texto += `Task que originou o problema: ${data.get("origemBug")}\n`;
+      texto += `**Task que originou o problema**: ${data.get("origemBug")}\n`;
 
     if (data.get("escopoAlterado"))
-      texto += `Alteração de Escopo: ${data.get("escopoAlterado")}\n`;
+      texto += `**Alteração de Escopo**: ${data.get("escopoAlterado")}\n`;
 
     if (data.get("docAtualizada") === "Sim")
-      texto += `Documentação atualizada por: ${data.get("responsavelDoc")}\n`;
+      texto += `**Documentação atualizada por**: ${data.get("responsavelDoc")}\n`;
 
     if (data.get("riscos"))
-      texto += `Riscos: ${data.get("riscos")}\n`;
+      texto += `**Riscos**: ${data.get("riscos")}\n`;
 
     if (data.get("cenariosQa"))
-      texto += `Cenários para o QA: ${data.get("cenariosQa")}\n`;
+      texto += `**Cenários para o QA**: ${data.get("cenariosQa")}\n`;
 
     if (checklist.length > 0) {
-      texto += `Itens do Checklist:\n`;
+      texto += `**Itens do Checklist**:\n`;
       checklist.forEach(item => texto += `- ${item}\n`);
     }
 
