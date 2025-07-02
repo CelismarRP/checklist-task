@@ -27,6 +27,31 @@
         </div>
       </div>
 	  -->
+	<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+	  <div>
+		<label for="branchOrigem" class="block font-semibold">Branch Origem</label>
+		<select id="branchOrigem" name="branchOrigem" class="w-full border p-2 rounded">
+		  <option value="">Selecione...</option>
+		  <option value="master">master</option>
+		  <option value="hotfix">hotfix</option>
+		  <option value="release">release</option>
+		  <option value="release_8_0">release_8_0</option>
+		  <option value="develop">develop</option>
+		</select>
+	  </div>
+	  <div>
+		<label for="branchDestino" class="block font-semibold">Branch Destino</label>
+		<select id="branchDestino" name="branchDestino" class="w-full border p-2 rounded">
+		  <option value="">Selecione...</option>
+		  <option value="master">master</option>
+		  <option value="hotfix">hotfix</option>
+		  <option value="release">release</option>
+		  <option value="release_8_0">release_8_0</option>
+		  <option value="develop">develop</option>
+		</select>
+	  </div>
+	</div>
+
       <!-- Objetivo -->
       <div>
         <label class="block font-semibold">Qual era o objetivo da tarefa?</label>
@@ -168,15 +193,23 @@
 
   function montarTextoComentario(data) {
     const checklist = data.getAll("checklist");
+    const branchOrigem = data.get("branchOrigem");
+    const branchDestino = data.get("branchDestino");
 
     let texto = '';
+	if (!branchOrigem || !branchDestino) {
+		throw new Error("Você deve selecionar a Branch Origem e a Branch Destino.");
+	}
+	texto += `**Branch Origem**: ${branchOrigem}\n`;
+	texto += `**Branch Destino**: ${branchDestino}\n\n`;
     texto += `**Objetivo da Tarefa**: ${data.get("objetivo")}\n`;
     texto += `**Alterações no Código**: ${data.get("alteracoes")}\n`;
 	
 	if (data.get("infoRelevante"))
 	  texto += `**Informações relevantes sobre a tarefa**: ${data.get("infoRelevante")}\n`;
     
-	texto += `**Áreas Impactadas**: ${data.get("impacto")}\n`;
+	if (data.get("impacto"))
+	  texto += `**Áreas Impactadas**: ${data.get("impacto")}\n`;
 
     if (data.get("origemBug"))
       texto += `**Task que originou o problema**: ${data.get("origemBug")}\n`;
@@ -201,15 +234,18 @@
     return texto;
   }
 
-  function copiarParaClipboard() {
-    const form = document.getElementById("checklistForm");
-    const data = new FormData(form);
-    const texto = montarTextoComentario(data);
-
-    navigator.clipboard.writeText(texto)
-      .then(() => alert("Informações copiadas para a memória!"))
-      .catch(err => alert("Erro ao copiar: " + err));
-  }
+	function copiarParaClipboard() {
+	  const form = document.getElementById("checklistForm");
+	  const data = new FormData(form);
+	  try {
+		const texto = montarTextoComentario(data);
+		navigator.clipboard.writeText(texto)
+		  .then(() => alert("Informações copiadas para a memória!"))
+		  .catch(err => alert("Erro ao copiar: " + err));
+	  } catch (err) {
+		alert(err.message);
+	  }
+	}
 
   async function enviarParaAzure() {
     const form = document.getElementById("checklistForm");
