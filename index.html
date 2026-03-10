@@ -1,330 +1,1178 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Checklist Dev - Finalização</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Dev Checklist — Finalização de Tarefa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #0d0f14;
+      --surface:   #13161e;
+      --surface-2: #1a1e28;
+      --surface-3: #1f2433;
+      --border:    #262c3d;
+      --border-hi: #363e56;
+      --accent:    #4ade80;
+      --accent-dim:#1a3d28;
+      --accent-glow: rgba(74,222,128,0.15);
+      --blue:      #60a5fa;
+      --blue-dim:  #1a2a40;
+      --red:       #f87171;
+      --red-dim:   #3a1a1a;
+      --text:      #e2e8f0;
+      --text-muted:#7a8499;
+      --text-dim:  #4a5568;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Sora', sans-serif;
+      --r: 10px;
+      --r-lg: 14px;
+    }
+
+    /* ── LIGHT THEME ── */
+    body.light {
+      --bg:        #f0f2f7;
+      --surface:   #ffffff;
+      --surface-2: #f5f7fb;
+      --surface-3: #eaecf3;
+      --border:    #d8dce8;
+      --border-hi: #b8bdd0;
+      --accent:    #16a34a;
+      --accent-dim:#dcfce7;
+      --accent-glow: rgba(22,163,74,0.15);
+      --blue:      #2563eb;
+      --blue-dim:  #dbeafe;
+      --red:       #dc2626;
+      --red-dim:   #fee2e2;
+      --text:      #111827;
+      --text-muted:#4b5563;
+      --text-dim:  #9ca3af;
+    }
+
+    body, body * { transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease; }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13,15,20,0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .topbar-icon {
+      width: 30px; height: 30px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px;
+    }
+
+    .topbar-title {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .topbar-title span { color: var(--accent); }
+
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-family: var(--mono);
+    }
+
+    .progress-bar-outer {
+      width: 120px; height: 4px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-bar-inner {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 99px;
+      width: 0%;
+      transition: width 0.4s ease;
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    /* ── LAYOUT ── */
+    .layout {
+      display: flex;
+      flex: 1;
+      max-width: 1080px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 32px 24px 80px;
+      gap: 28px;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 196px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 76px;
+      align-self: flex-start;
+    }
+
+    .sidebar-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+      font-family: var(--mono);
+      padding-left: 12px;
+    }
+
+    .sidebar-nav { display: flex; flex-direction: column; gap: 2px; }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 0.76rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s;
+      border: 1px solid transparent;
+    }
+
+    .nav-item:hover { color: var(--text); background: var(--surface-2); border-color: var(--border); }
+    .nav-item.active { color: var(--accent); background: var(--accent-dim); border-color: rgba(74,222,128,0.2); }
+
+    .nav-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+    /* ── MAIN ── */
+    .main { flex: 1; display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+    .main form { display: flex; flex-direction: column; gap: 24px; }
+
+    /* ── SECTION CARD ── */
+    .section-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      transition: border-color 0.2s;
+      animation: fadeUp 0.35s ease both;
+    }
+
+    .section-card:hover { border-color: var(--border-hi); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-card:nth-child(1) { animation-delay: 0.04s; }
+    .section-card:nth-child(2) { animation-delay: 0.08s; }
+    .section-card:nth-child(3) { animation-delay: 0.12s; }
+    .section-card:nth-child(4) { animation-delay: 0.16s; }
+    .section-card:nth-child(5) { animation-delay: 0.20s; }
+    .section-card:nth-child(6) { animation-delay: 0.24s; }
+    .section-card:nth-child(7) { animation-delay: 0.28s; }
+    .section-card:nth-child(8) { animation-delay: 0.32s; }
+
+    .section-head {
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface-2);
+    }
+
+    .section-icon {
+      width: 34px; height: 34px;
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .icon-green  { background: var(--accent-dim); }
+    .icon-blue   { background: var(--blue-dim); }
+    .icon-orange { background: #2d1f0a; }
+    .icon-red    { background: var(--red-dim); }
+    .icon-purple { background: #1e1a36; }
+
+    .section-head-text h2 {
+      font-size: 0.87rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .section-head-text p {
+      font-size: 0.71rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .section-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* ── FIELDS ── */
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    .field-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-family: var(--mono);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tag-req {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      background: var(--accent-dim);
+      border-radius: 4px;
+      padding: 1px 5px;
+    }
+
+    .tag-opt {
+      font-size: 0.68rem;
+      font-weight: 400;
+      color: var(--text-dim);
+      text-transform: none;
+      letter-spacing: 0;
+      font-family: var(--sans);
+    }
+
+    input[type="text"], textarea, select {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 9px 13px;
+      font-family: var(--sans);
+      font-size: 0.855rem;
+      color: var(--text);
+      outline: none;
+      width: 100%;
+      transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+
+    input[type="text"]::placeholder, textarea::placeholder { color: var(--text-dim); }
+    select option { background: var(--surface-2); color: var(--text); }
+
+    input[type="text"]:focus, textarea:focus, select:focus {
+      border-color: var(--accent);
+      background: var(--surface-3);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    textarea { resize: vertical; }
+
+    /* ── TOGGLE ROWS ── */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+
+    .toggle-row:hover { border-color: var(--border-hi); background: var(--surface-3); }
+    .toggle-row.active { border-color: rgba(74,222,128,0.3); background: var(--accent-dim); }
+
+    /* Switch */
+    .switch { position: relative; width: 34px; height: 18px; flex-shrink: 0; }
+    .switch input { display: none; }
+    .switch-track {
+      position: absolute; inset: 0;
+      background: var(--border-hi);
+      border-radius: 99px;
+      transition: background 0.2s;
+    }
+    .switch-thumb {
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 12px; height: 12px;
+      background: var(--text-dim);
+      border-radius: 50%;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .switch input:checked ~ .switch-track { background: var(--accent); }
+    .switch input:checked ~ .switch-thumb { transform: translateX(16px); background: #0d0f14; }
+
+    .toggle-label { font-size: 0.83rem; font-weight: 500; color: var(--text-muted); transition: color 0.15s; }
+    .toggle-row.active .toggle-label { color: var(--text); }
+
+    /* Collapsible */
+    .collapsible { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, opacity 0.25s ease; opacity: 0; }
+    .collapsible.open { max-height: 900px; opacity: 1; }
+    .collapsible-inner { padding-top: 14px; display: flex; flex-direction: column; gap: 14px; }
+
+    /* ── SCENARIOS ── */
+    .scenario-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .scenario-item {
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .scenario-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 14px;
+      background: var(--surface-3);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .scenario-num {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .scenario-num::before {
+      content: '';
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 6px var(--accent);
+    }
+
+    .btn-remove {
+      background: none;
+      border: 1px solid transparent;
+      cursor: pointer;
+      color: var(--text-dim);
+      font-size: 0.75rem;
+      padding: 3px 9px;
+      border-radius: 6px;
+      transition: all 0.15s;
+      font-family: var(--mono);
+    }
+    .btn-remove:hover { color: var(--red); background: var(--red-dim); border-color: rgba(248,113,113,0.2); }
+
+    .scenario-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding: 14px;
+      background: var(--surface);
+    }
+
+    .btn-add-scenario {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px;
+      border: 1.5px dashed var(--border-hi);
+      border-radius: var(--r);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: var(--sans);
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 4px;
+    }
+
+    .btn-add-scenario:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    /* ── CHECKLIST ── */
+    .checklist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 13px;
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      background: var(--surface-2);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+
+    .check-item:hover { border-color: var(--border-hi); color: var(--text); background: var(--surface-3); }
+    .check-item.checked { background: var(--accent-dim); border-color: rgba(74,222,128,0.3); color: var(--accent); }
+
+    .check-item input[type="checkbox"] { display: none; }
+
+    .check-box {
+      width: 16px; height: 16px;
+      border: 1.5px solid var(--border-hi);
+      border-radius: 4px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      transition: all 0.15s;
+      color: transparent;
+    }
+
+    .check-item.checked .check-box {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #000;
+    }
+
+    /* ── COPY BTN ── */
+    .btn-copy {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 12px 30px;
+      background: var(--accent);
+      color: #060a0c;
+      border: none;
+      border-radius: var(--r);
+      font-family: var(--sans);
+      font-size: 0.875rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      box-shadow: 0 0 24px rgba(74,222,128,0.2);
+      letter-spacing: -0.01em;
+    }
+
+    .btn-copy:hover { background: #6ee7a0; box-shadow: 0 0 36px rgba(74,222,128,0.35); transform: translateY(-1px); }
+    .btn-copy:active { transform: translateY(0); }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      background: var(--surface-3);
+      border: 1px solid rgba(74,222,128,0.4);
+      border-radius: var(--r);
+      padding: 12px 20px;
+      font-size: 0.82rem;
+      color: var(--accent);
+      font-weight: 600;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 24px var(--accent-glow);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(.175,.885,.32,1.275);
+      z-index: 9999;
+      pointer-events: none;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 12px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      font-family: var(--mono);
+      transition: all 0.15s;
+      user-select: none;
+      margin-left: 16px;
+    }
+    .theme-toggle:hover { border-color: var(--border-hi); color: var(--text); }
+    .theme-toggle .toggle-icon { font-size: 14px; }
+
+    .action-bar { display: flex; justify-content: flex-end; padding-top: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 99px; }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .layout { padding: 20px 16px 80px; }
+      .grid-2, .scenario-body, .checklist-grid { grid-template-columns: 1fr; }
+      .topbar { padding: 0 16px; }
+    }
+  </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
-  <div class="max-w-4xl mx-auto p-6 mt-8 bg-white rounded-xl shadow-lg space-y-6">
-    <h1 class="text-2xl font-bold text-center text-blue-600">Checklist de Finalização de Tarefa</h1>
-    
-    <form id="checklistForm" class="space-y-6">
-      <!-- Info básica
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="block font-semibold">Desenvolvedor</label>
-          <input type="text" name="dev" class="w-full border p-2 rounded"
-                 placeholder="Nome do desenvolvedor responsável pela entrega."
-                 title="Nome do desenvolvedor responsável pela entrega." required>
-        </div>
-        <div>
-          <label class="block font-semibold">Task (Azure)</label>
-          <input type="text" name="taskId" class="w-full border p-2 rounded"
-                 placeholder="Ex: 12345"
-                 title="Informe o número ou ID da tarefa no Azure (apenas números)." required>
-        </div>
-      </div>
-	  -->
-	<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-	  <div>
-		<label for="branchOrigem" class="block font-semibold">Branch Origem</label>
-		<select id="branchOrigem" name="branchOrigem" class="w-full border p-2 rounded">
-		  <option value="">Selecione...</option>
-		  <option value="master">master</option>
-		  <option value="hotfix">hotfix</option>
-		  <option value="release">release</option>
-		  <option value="release_8_0">release_8_0</option>
-		  <option value="develop">develop</option>
-		</select>
-	  </div>
-	  <div>
-		<label for="branchDestino" class="block font-semibold">Branch Destino</label>
-		<select id="branchDestino" name="branchDestino" class="w-full border p-2 rounded">
-		  <option value="">Selecione...</option>
-		  <option value="master">master</option>
-		  <option value="hotfix">hotfix</option>
-		  <option value="release">release</option>
-		  <option value="release_8_0">release_8_0</option>
-		  <option value="develop">develop</option>
-		</select>
-	  </div>
-	</div>
+<body>
 
-      <!-- Objetivo -->
-      <div>
-        <label class="block font-semibold">Qual era o objetivo da tarefa?</label>
-        <textarea id="campoObjetivo" name="objetivo" rows="3" class="w-full border p-2 rounded"
-          placeholder="Descreva de forma clara e sucinta o objetivo da tarefa."
-          title="Descreva de forma clara e sucinta qual era o objetivo principal da tarefa." required></textarea>
-		<!--<button type="button" onclick="melhorarTextoIA(document.getElementById('campoObjetivo'))"
-          class="bg-purple-600 text-white px-2 py-1 rounded hover:bg-purple-700">
-          ✨ Melhorar
-        </button>-->
-      </div>
-
-      <!-- Mudanças -->
-      <div>
-        <label class="block font-semibold">Que mudanças foram feitas no código?</label>
-        <textarea id="campoAlteracoes" name="alteracoes" rows="3" class="w-full border p-2 rounded"
-          placeholder='Especifique as mudanças feitas no código. Seja objetivo e mencione nomes de métodos, classes ou funções alteradas.'
-          title='Ex: Retirada função XYZ... Cálculo de determinada classe foi trocado por uma função já utilizada em outra... Descrevendo de maneira mais específica."'></textarea>
-		<!--<button type="button" onclick="melhorarTextoIA(document.getElementById('campoAlteracoes'))"
-          class="bg-purple-600 text-white px-2 py-1 rounded hover:bg-purple-700">
-          ✨ Melhorar
-        </button> -->
-      </div>
-
-      <div>
-        <label class="block font-semibold">Quais áreas do sistema foram impactadas por essa alteração?</label>
-        <textarea name="impacto" rows="3" class="w-full border p-2 rounded"
-          placeholder='Liste os módulos, rotinas ou partes do sistema que podem ser afetadas direta ou indiretamente por essa alteração.'
-          title="Exemplo: “A implementação da dedução de tal evento na função ABC pode impactar as rotinas de cálculo XYZ nas folhas de férias e mensal.”"></textarea>
-      </div>
-
-      <div>
-        <label class="block font-semibold">Informações relevantes sobre a tarefa:</label>
-        <textarea name="infoRelevante" rows="3" class="w-full border p-2 rounded"
-          placeholder='Descreva alguma situação que você julgue importante informar.'
-          title='Ex: Mudança na análise que não está no escopo; Correção em um ponto não informado na tarefa que foi necessário para a conclusão; etc...'></textarea>
-      </div>
-
-      <!-- É bug? -->
-      <div>
-        <label class="inline-flex items-center">
-          <input type="checkbox" id="chkBug" class="mr-2">Essa tarefa é uma correção de bug?
-        </label>
-        <div id="divBug" class="mt-2 hidden">
-          <label class="block font-semibold">Task que originou o problema:</label>
-          <input type="text" name="origemBug" class="w-full border p-2 rounded"
-                 placeholder="Essa informação é importante para testar a correção tanto no cenário atual quanto no cenário original, garantindo que a solução atenda ambas as situações."
-                 title="Se este bug foi originado por uma task anterior, informe o ID dela para o QA validar ambos os cenários.">
-        </div>
-      </div>
-
-      <!-- Escopo -->
-      <div>
-        <label class="inline-flex items-center">
-          <input type="checkbox" id="chkEscopo" class="mr-2"> Houve alteração no escopo da tarefa?
-        </label>
-        <div id="divEscopo" class="mt-2 hidden">
-          <label class="block font-semibold">Descreva a alteração:</label>
-          <textarea name="escopoAlterado" rows="2" class="w-full border p-2 rounded"
-            placeholder="Caso a tarefa tenha sido alterada ou se a descrição original da task não corresponder ao que foi realmente desenvolvido, informe as modificações no escopo e descreva o que foi desenvolvido além do previsto originalmente."
-            title="Informe o que foi alterado/desenvolvido além do escopo da task original."></textarea>
-        </div>
-      </div>
-
-      <!-- Documentação -->
-      <div>
-        <label class="block font-semibold">A documentação foi atualizada?</label>
-        <select id="selDoc" name="docAtualizada" class="w-full border p-2 rounded"
-                title="Se a tarefa afetou a documentação da regra de negócio ou dos casos de teste, e essas alterações impactaram o código, informe o responsável para que a documentação seja atualizada adequadamente.">
-          <option value="Não">Não</option>
-          <option value="Sim">Sim</option>
-        </select>
-        <div id="divResponsavelDoc" class="mt-2 hidden">
-          <label class="block font-semibold">Responsável pela atualização:</label>
-          <input type="text" name="responsavelDoc" class="w-full border p-2 rounded"
-                 placeholder="Nome do responsável"
-                 title="Informe quem deve atualizar ou atualizou a documentação.">
-        </div>
-      </div>
-
-      <!-- Riscos -->
-      <div>
-        <label class="inline-flex items-center">
-          <input type="checkbox" id="chkRiscos" class="mr-2">Há riscos conhecidos relacionados a essa implementação?
-        </label>
-        <div id="divRiscos" class="mt-2 hidden">
-          <label class="block font-semibold"> Descreva os riscos: </label>
-          <textarea name="riscos" rows="2" class="w-full border p-2 rounded"
-            placeholder="Se a alteração envolveu modificações em blocos de código ou funções críticas, como rotinas de cálculo ou emissões fiscais para o eSocial, descreva os possíveis riscos que podem surgir dessa implementação."
-            title="Indique riscos técnicos, funcionais ou sistêmicos que o QA deve estar atento."></textarea>
-
-          <label class="block font-semibold mt-2"> Existem cenários de teste adicionais não descritos na tarefa? </label>
-          <textarea name="cenariosQa" rows="2" class="w-full border p-2 rounded"
-            placeholder="Servidor, Banco de Simulação, Funcionário, Competência"
-            title="Caso tenha sido necessário testar em ambientes ou cenários não mencionados na task original, por favor, forneça os detalhes."></textarea>
-        </div>
-      </div>
-
-      <div>
-        <label class="block font-semibold mb-2">Checklist Final:</label>
-        <div class="grid grid-cols-2 gap-2">
-          <label><input type="checkbox" name="checklist" value="Código revisado" class="mr-2"> Código revisado</label>
-          <label><input type="checkbox" name="checklist" value="Testes manuais realizados" class="mr-2"> Testes manuais realizados</label>
-          <label><input type="checkbox" name="checklist" value="Impacto analisado" class="mr-2"> Impacto analisado</label>
-          <label><input type="checkbox" name="checklist" value="Validação com dados reais" class="mr-2"> Validação com dados reais</label>
-		  <label><input type="checkbox" name="checklist" value="Permissionamento revisado (novo item de menu)" class="mr-2"> Permissionamento revisado (novo item de menu)</label>
-          <label><input type="checkbox" name="checklist" value="QA informado" class="mr-2"> QA informado</label>
-        </div>
-      </div>
-
-<div class="flex justify-between gap-4">
-  <button type="button" onclick="copiarParaClipboard()"
-          class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-    Copiar
-  </button>
-
-<!--
-  <button type="button" onclick="enviarParaAzure()"
-          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-    Enviar para Azure
-  </button>
--->
-</div>
-    </form>
+<header class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-icon">⚙</div>
+    <span class="topbar-title">dev<span>.</span>checklist</span>
   </div>
+  <div class="progress-wrap">
+    <span id="progressLabel">0 / 0</span>
+    <div class="progress-bar-outer">
+      <div class="progress-bar-inner" id="progressBar"></div>
+    </div>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+      <span class="toggle-icon" id="themeIcon">☀</span>
+      <span id="themeLabel">Claro</span>
+    </button>
+  </div>
+</header>
 
-  <script>
-  document.getElementById("chkBug").addEventListener("change", function () {
-    document.getElementById("divBug").classList.toggle("hidden", !this.checked);
-  });
-  document.getElementById("chkEscopo").addEventListener("change", function () {
-    document.getElementById("divEscopo").classList.toggle("hidden", !this.checked);
-  });
-  document.getElementById("selDoc").addEventListener("change", function () {
-    document.getElementById("divResponsavelDoc").classList.toggle("hidden", this.value !== "Sim");
-  });
-  document.getElementById("chkRiscos").addEventListener("change", function () {
-    document.getElementById("divRiscos").classList.toggle("hidden", !this.checked);
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-label">Seções</div>
+    <nav class="sidebar-nav">
+      <a class="nav-item active" href="#sec-identificacao"><div class="nav-dot"></div>Identificação</a>
+      <a class="nav-item" href="#sec-descricao"><div class="nav-dot"></div>Descrição</a>
+      <a class="nav-item" href="#sec-banco"><div class="nav-dot"></div>Banco de Dados</a>
+      <a class="nav-item" href="#sec-cenarios"><div class="nav-dot"></div>Cenários</a>
+      <a class="nav-item" href="#sec-config"><div class="nav-dot"></div>Config & Integrações</a>
+      <a class="nav-item" href="#sec-especiais"><div class="nav-dot"></div>Situações Especiais</a>
+      <a class="nav-item" href="#sec-docs"><div class="nav-dot"></div>Documentação</a>
+      <a class="nav-item" href="#sec-checklist"><div class="nav-dot"></div>Checklist Final</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+  <form id="checklistForm">
+
+    <!-- IDENTIFICAÇÃO -->
+    <div class="section-card" id="sec-identificacao">
+      <div class="section-head">
+        <div class="section-icon icon-green">🏷</div>
+        <div class="section-head-text">
+          <h2>Identificação</h2>
+          <p>Branches, tipo e dependências da tarefa</p>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="grid-2">
+          <div class="field">
+            <label class="field-label">Branch Origem <span class="tag-req">obrigatório</span></label>
+            <select id="branchOrigem" name="branchOrigem" required>
+              <option value="">Selecione...</option>
+              <option value="master">master</option>
+              <option value="hotfix">hotfix</option>
+              <option value="release">release</option>
+              <option value="release_8_0">release_8_0</option>
+              <option value="develop">develop</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">Branch Destino <span class="tag-req">obrigatório</span></label>
+            <select id="branchDestino" name="branchDestino" required>
+              <option value="">Selecione...</option>
+              <option value="master">master</option>
+              <option value="hotfix">hotfix</option>
+              <option value="release">release</option>
+              <option value="release_8_0">release_8_0</option>
+              <option value="develop">develop</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label class="field-label">Tipo da Tarefa <span class="tag-req">obrigatório</span></label>
+            <select name="tipoTarefa" required>
+              <option value="">Selecione...</option>
+              <option value="Feature">✨ Feature</option>
+              <option value="Correção de Bug">🐛 Correção de Bug</option>
+              <option value="Hotfix">🚨 Hotfix</option>
+              <option value="Refatoração">🔧 Refatoração</option>
+              <option value="Melhoria de Performance">⚡ Melhoria de Performance</option>
+              <option value="Documentação">📄 Documentação</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">Dependência de outras tasks <span class="tag-opt">(opcional)</span></label>
+            <input type="text" name="dependencias" placeholder="Ex: Task #1234 deve ser publicada antes desta">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESCRIÇÃO -->
+    <div class="section-card" id="sec-descricao">
+      <div class="section-head">
+        <div class="section-icon icon-blue">📝</div>
+        <div class="section-head-text">
+          <h2>Descrição da Tarefa</h2>
+          <p>Objetivo, alterações realizadas e áreas de impacto</p>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label class="field-label">Objetivo da tarefa <span class="tag-req">obrigatório</span></label>
+          <textarea name="objetivo" rows="3" required placeholder="Descreva de forma clara e sucinta o objetivo da tarefa."></textarea>
+        </div>
+        <div class="field">
+          <label class="field-label">Mudanças feitas no código <span class="tag-opt">(opcional)</span></label>
+          <textarea name="alteracoes" rows="3" placeholder="Mencione métodos, classes ou funções alteradas."></textarea>
+        </div>
+        <div class="field">
+          <label class="field-label">Áreas do sistema impactadas <span class="tag-opt">(opcional)</span></label>
+          <textarea name="impacto" rows="2" placeholder="Módulos, rotinas ou partes do sistema afetadas direta ou indiretamente."></textarea>
+        </div>
+        <div class="field">
+          <label class="field-label">Informações relevantes <span class="tag-opt">(opcional)</span></label>
+          <textarea name="infoRelevante" rows="2" placeholder="Ex: Mudança fora do escopo, correção adicional necessária, etc."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- BANCO DE DADOS -->
+    <div class="section-card" id="sec-banco">
+      <div class="section-head">
+        <div class="section-icon icon-orange">🗄</div>
+        <div class="section-head-text">
+          <h2>Banco de Dados</h2>
+          <p>Alterações de estrutura, scripts e migrações</p>
+        </div>
+      </div>
+      <div class="section-body">
+        <label class="toggle-row" id="toggleBanco" for="chkBanco">
+          <div class="switch">
+            <input type="checkbox" id="chkBanco">
+            <div class="switch-track"></div>
+            <div class="switch-thumb"></div>
+          </div>
+          <span class="toggle-label">Houve alteração no banco de dados?</span>
+        </label>
+        <div id="divBanco" class="collapsible">
+          <div class="collapsible-inner">
+            <div class="grid-2">
+              <div class="field">
+                <label class="field-label">Tipo de alteração</label>
+                <select name="tipoBanco">
+                  <option value="">Selecione...</option>
+                  <option value="Nova tabela">Nova tabela</option>
+                  <option value="Nova coluna">Nova coluna</option>
+                  <option value="Novo índice">Novo índice</option>
+                  <option value="Procedure / Function">Procedure / Function</option>
+                  <option value="Alteração de dados (DML)">Alteração de dados (DML)</option>
+                  <option value="Outro">Outro</option>
+                </select>
+              </div>
+              <div class="field">
+                <label class="field-label">Script de migração gerado?</label>
+                <select name="scriptMigracao">
+                  <option value="Não">Não</option>
+                  <option value="Sim - ainda não aplicado">Sim — ainda não aplicado</option>
+                  <option value="Sim - já aplicado em produção">Sim — já aplicado em produção</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label">Observações <span class="tag-opt">(opcional)</span></label>
+              <textarea name="obsBanco" rows="2" placeholder="Impactos em dados existentes, estrutura alterada, etc."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENÁRIOS -->
+    <div class="section-card" id="sec-cenarios">
+      <div class="section-head">
+        <div class="section-icon icon-green">🧪</div>
+        <div class="section-head-text">
+          <h2>Cenários Testados</h2>
+          <p>Instância, banco, filtro e competência de cada teste realizado</p>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="scenario-list" id="scenarioList"></div>
+        <button type="button" class="btn-add-scenario" onclick="adicionarCenario()">
+          + Adicionar Cenário de Teste
+        </button>
+      </div>
+    </div>
+
+    <!-- CONFIG & INTEGRAÇÕES -->
+    <div class="section-card" id="sec-config">
+      <div class="section-head">
+        <div class="section-icon icon-blue">⚙</div>
+        <div class="section-head-text">
+          <h2>Configurações e Integrações</h2>
+          <p>Arquivos de config, integrações externas e impacto em performance</p>
+        </div>
+      </div>
+      <div class="section-body">
+        <label class="toggle-row" id="toggleConfig" for="chkConfig">
+          <div class="switch"><input type="checkbox" id="chkConfig"><div class="switch-track"></div><div class="switch-thumb"></div></div>
+          <span class="toggle-label">Houve alteração em arquivos de configuração?</span>
+        </label>
+        <div id="divConfig" class="collapsible">
+          <div class="collapsible-inner">
+            <div class="field">
+              <label class="field-label">Descreva as alterações</label>
+              <textarea name="configAlterada" rows="2" placeholder="Ex: appsettings.json, variáveis de ambiente, parâmetros — e em quais ambientes foram aplicadas."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <label class="toggle-row" id="toggleIntegracao" for="chkIntegracao">
+          <div class="switch"><input type="checkbox" id="chkIntegracao"><div class="switch-track"></div><div class="switch-thumb"></div></div>
+          <span class="toggle-label">Essa tarefa afeta alguma integração externa?</span>
+        </label>
+        <div id="divIntegracao" class="collapsible">
+          <div class="collapsible-inner">
+            <div class="grid-2">
+              <div class="field">
+                <label class="field-label">Qual integração?</label>
+                <select name="qualIntegracao">
+                  <option value="">Selecione...</option>
+                  <option value="eSocial">eSocial</option>
+                  <option value="e-CAC">e-CAC</option>
+                  <option value="SEFAZ">SEFAZ</option>
+                  <option value="API de terceiros">API de terceiros</option>
+                  <option value="Outro">Outro</option>
+                </select>
+              </div>
+              <div class="field">
+                <label class="field-label">Como foi impactada?</label>
+                <input type="text" name="impactoIntegracao" placeholder="Descreva o impacto na integração">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <label class="toggle-row" id="togglePerformance" for="chkPerformance">
+          <div class="switch"><input type="checkbox" id="chkPerformance"><div class="switch-track"></div><div class="switch-thumb"></div></div>
+          <span class="toggle-label">A alteração pode impactar a performance do sistema?</span>
+        </label>
+        <div id="divPerformance" class="collapsible">
+          <div class="collapsible-inner">
+            <div class="field">
+              <label class="field-label">Descreva o impacto esperado</label>
+              <textarea name="impactoPerformance" rows="2" placeholder="Ex: Query sem índice em tabela grande, cálculo em massa, loop em lista extensa, etc."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SITUAÇÕES ESPECIAIS -->
+    <div class="section-card" id="sec-especiais">
+      <div class="section-head">
+        <div class="section-icon icon-red">⚠</div>
+        <div class="section-head-text">
+          <h2>Situações Especiais</h2>
+          <p>Bugs, mudanças de escopo, riscos e plano de rollback</p>
+        </div>
+      </div>
+      <div class="section-body">
+        <label class="toggle-row" id="toggleBug" for="chkBug">
+          <div class="switch"><input type="checkbox" id="chkBug"><div class="switch-track"></div><div class="switch-thumb"></div></div>
+          <span class="toggle-label">Essa tarefa é uma correção de bug?</span>
+        </label>
+        <div id="divBug" class="collapsible">
+          <div class="collapsible-inner">
+            <div class="field">
+              <label class="field-label">Task que originou o problema</label>
+              <input type="text" name="origemBug" placeholder="ID da task original para o QA validar ambos os cenários.">
+            </div>
+          </div>
+        </div>
+
+        <label class="toggle-row" id="toggleEscopo" for="chkEscopo">
+          <div class="switch"><input type="checkbox" id="chkEscopo"><div class="switch-track"></div><div class="switch-thumb"></div></div>
+          <span class="toggle-label">Houve alteração no escopo da tarefa?</span>
+        </label>
+        <div id="divEscopo" class="collapsible">
+          <div class="collapsible-inner">
+            <div class="field">
+              <label class="field-label">Descreva a alteração de escopo</label>
+              <textarea name="escopoAlterado" rows="2" placeholder="O que foi alterado ou desenvolvido além do escopo original."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <label class="toggle-row" id="toggleRiscos" for="chkRiscos">
+          <div class="switch"><input type="checkbox" id="chkRiscos"><div class="switch-track"></div><div class="switch-thumb"></div></div>
+          <span class="toggle-label">Há riscos conhecidos relacionados a essa implementação?</span>
+        </label>
+        <div id="divRiscos" class="collapsible">
+          <div class="collapsible-inner">
+            <div class="field">
+              <label class="field-label">Descreva os riscos</label>
+              <textarea name="riscos" rows="2" placeholder="Ex: rotinas de cálculo críticas, emissões fiscais, dados legados, etc."></textarea>
+            </div>
+            <div class="field">
+              <label class="field-label">Plano de rollback</label>
+              <textarea name="rollback" rows="2" placeholder="Ex: Reverter o merge; rodar script inverso; desativar feature flag, etc."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOCUMENTAÇÃO -->
+    <div class="section-card" id="sec-docs">
+      <div class="section-head">
+        <div class="section-icon icon-purple">📚</div>
+        <div class="section-head-text">
+          <h2>Documentação e Evidências</h2>
+          <p>Status da documentação e links de evidência dos testes</p>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label class="field-label">A documentação foi atualizada?</label>
+          <select id="selDoc" name="docAtualizada">
+            <option value="Não">Não</option>
+            <option value="Sim">Sim</option>
+          </select>
+        </div>
+        <div id="divResponsavelDoc" class="collapsible">
+          <div class="collapsible-inner">
+            <div class="field">
+              <label class="field-label">Responsável pela atualização</label>
+              <input type="text" name="responsavelDoc" placeholder="Nome do responsável">
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Links de evidências <span class="tag-opt">(prints, vídeos, SharePoint...)</span></label>
+          <textarea name="evidencias" rows="2" placeholder="Cole aqui os links das evidências. Ex: https://sharepoint.../evidencia.png"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHECKLIST FINAL -->
+    <div class="section-card" id="sec-checklist">
+      <div class="section-head">
+        <div class="section-icon icon-green">✅</div>
+        <div class="section-head-text">
+          <h2>Checklist Final</h2>
+          <p>Confirme os itens concluídos antes de enviar para revisão</p>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="checklist-grid" id="checklistGrid"></div>
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <button type="button" class="btn-copy" onclick="copiarParaClipboard()">
+        <span>📋</span> Copiar para Área de Transferência
+      </button>
+    </div>
+
+  </form>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  function toggleTheme() {
+    const isLight = document.body.classList.toggle("light");
+    document.getElementById("themeIcon").textContent  = isLight ? "🌙" : "☀";
+    document.getElementById("themeLabel").textContent = isLight ? "Escuro" : "Claro";
+  }
+
+  // Checklist
+  const checklistItems = [
+    "Código revisado",
+    "Testes manuais realizados",
+    "Impacto analisado",
+    "Validação com dados reais",
+    "Sem conflitos de merge pendentes",
+    "Script de banco gerado/aplicado",
+    "Testado em mais de um ambiente",
+    "Logs relevantes adicionados",
+    "Nenhum dado hardcoded",
+    "Permissionamento revisado (novo item de menu)",
+    "QA informado",
+  ];
+
+  const grid = document.getElementById("checklistGrid");
+  checklistItems.forEach(item => {
+    const label = document.createElement("label");
+    label.className = "check-item";
+    label.innerHTML = `<input type="checkbox" name="checklist" value="${item}"><div class="check-box"></div>${item}`;
+    const cb = label.querySelector("input");
+    cb.addEventListener("change", function() {
+      label.classList.toggle("checked", this.checked);
+      label.querySelector(".check-box").textContent = this.checked ? "✓" : "";
+      updateProgress();
+    });
+    grid.appendChild(label);
   });
 
+  // Progress
+  function updateProgress() {
+    const fields = document.querySelectorAll("input[required], select[required], textarea[required]");
+    let filled = 0;
+    fields.forEach(f => { if (f.value.trim()) filled++; });
+    const pct = Math.round((filled / fields.length) * 100);
+    document.getElementById("progressBar").style.width = pct + "%";
+    document.getElementById("progressLabel").textContent = `${filled} / ${fields.length} preenchidos`;
+  }
+
+  document.querySelectorAll("input:not([type=checkbox]), select, textarea").forEach(el => {
+    el.addEventListener("input", updateProgress);
+    el.addEventListener("change", updateProgress);
+  });
+  updateProgress();
+
+  // Switches
+  function bindSwitch(checkId, divId, toggleId) {
+    const chk = document.getElementById(checkId);
+    const div = document.getElementById(divId);
+    const row = document.getElementById(toggleId);
+    chk.addEventListener("change", function() {
+      div.classList.toggle("open", this.checked);
+      row.classList.toggle("active", this.checked);
+    });
+  }
+
+  bindSwitch("chkBanco",       "divBanco",       "toggleBanco");
+  bindSwitch("chkConfig",      "divConfig",      "toggleConfig");
+  bindSwitch("chkIntegracao",  "divIntegracao",  "toggleIntegracao");
+  bindSwitch("chkPerformance", "divPerformance", "togglePerformance");
+  bindSwitch("chkBug",         "divBug",         "toggleBug");
+  bindSwitch("chkEscopo",      "divEscopo",      "toggleEscopo");
+  bindSwitch("chkRiscos",      "divRiscos",      "toggleRiscos");
+
+  document.getElementById("selDoc").addEventListener("change", function() {
+    document.getElementById("divResponsavelDoc").classList.toggle("open", this.value === "Sim");
+  });
+
+  // Sidebar active on scroll
+  const sections = document.querySelectorAll(".section-card[id]");
+  const navItems = document.querySelectorAll(".nav-item");
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navItems.forEach(n => n.classList.remove("active"));
+        const m = document.querySelector(`.nav-item[href="#${e.target.id}"]`);
+        if (m) m.classList.add("active");
+      }
+    });
+  }, { threshold: 0.3, rootMargin: "-10% 0px -60% 0px" });
+  sections.forEach(s => obs.observe(s));
+
+  // Scenarios
+  let scenarioCount = 0;
+
+  function adicionarCenario() {
+    scenarioCount++;
+    const id = scenarioCount;
+    const item = document.createElement("div");
+    item.className = "scenario-item";
+    item.id = `scenario-${id}`;
+    item.innerHTML = `
+      <div class="scenario-header">
+        <span class="scenario-num">Cenário #${String(id).padStart(2,"0")}</span>
+        <button type="button" class="btn-remove" onclick="removerCenario(${id})">✕ remover</button>
+      </div>
+      <div class="scenario-body">
+        <div class="field">
+          <label class="field-label">Instância / Servidor</label>
+          <input type="text" name="cenario_instancia_${id}" placeholder="Ex: PRODUCAO4, TESTES01">
+        </div>
+        <div class="field">
+          <label class="field-label">Banco de Dados</label>
+          <input type="text" name="cenario_banco_${id}" placeholder="Ex: DB_FOLHA, SimulacaoPgto">
+        </div>
+        <div class="field">
+          <label class="field-label">Filtro Utilizado</label>
+          <input type="text" name="cenario_filtro_${id}" placeholder="Ex: Empresa 001, Func. 12345">
+        </div>
+        <div class="field">
+          <label class="field-label">Competência</label>
+          <input type="text" name="cenario_competencia_${id}" placeholder="Ex: 05/2025">
+        </div>
+        <div class="field" style="grid-column:1/-1">
+          <label class="field-label">Resultado / Observação <span class="tag-opt">(opcional)</span></label>
+          <input type="text" name="cenario_resultado_${id}" placeholder="Ex: Cálculo correto, valor bate com o esperado">
+        </div>
+      </div>`;
+    document.getElementById("scenarioList").appendChild(item);
+  }
+
+  function removerCenario(id) {
+    const el = document.getElementById(`scenario-${id}`);
+    if (el) {
+      el.style.opacity = "0";
+      el.style.transform = "scale(0.97)";
+      el.style.transition = "all 0.18s ease";
+      setTimeout(() => el.remove(), 180);
+    }
+  }
+
+  // Toast
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 3000);
+  }
+
+  // Build text
   function montarTextoComentario(data) {
-    const checklist = data.getAll("checklist");
-    const branchOrigem = data.get("branchOrigem");
+    const branchOrigem  = data.get("branchOrigem");
     const branchDestino = data.get("branchDestino");
+    const objetivo      = data.get("objetivo");
 
-    let texto = '';
-	if (!branchOrigem || !branchDestino) {
-		throw new Error("Você deve selecionar a Branch Origem e a Branch Destino.");
-	}
-	texto += `**Branch Origem**: ${branchOrigem}\n`;
-	texto += `**Branch Destino**: ${branchDestino}\n\n`;
-    texto += `**Objetivo da Tarefa**: ${data.get("objetivo")}\n\n`;
-    texto += `**Alterações no Código**: ${data.get("alteracoes")}\n\n`;
-	
-	if (data.get("infoRelevante"))
-	  texto += `**Informações relevantes sobre a tarefa**: ${data.get("infoRelevante")}\n\n`;
-    
-	if (data.get("impacto"))
-	  texto += `**Áreas Impactadas**: ${data.get("impacto")}\n\n`;
+    if (!branchOrigem || !branchDestino) throw new Error("Selecione a Branch Origem e a Branch Destino.");
+    if (!objetivo?.trim())               throw new Error("Preencha o objetivo da tarefa.");
 
-    if (data.get("origemBug"))
-      texto += `**Task que originou o problema**: ${data.get("origemBug")}\n\n`;
+    let t = "";
 
-    if (data.get("escopoAlterado"))
-      texto += `**Alteração de Escopo**: ${data.get("escopoAlterado")}\n\n`;
+    const tipo = data.get("tipoTarefa");
+    if (tipo) t += `**Tipo**: ${tipo}\n`;
+    t += `**Branch Origem**: ${branchOrigem}\n`;
+    t += `**Branch Destino**: ${branchDestino}\n`;
+    const deps = data.get("dependencias");
+    if (deps?.trim()) t += `**Dependências**: ${deps}\n`;
+    t += "\n";
+
+    t += `**Objetivo da Tarefa**: ${objetivo}\n\n`;
+    const alt = data.get("alteracoes");
+    if (alt?.trim()) t += `**Alterações no Código**: ${alt}\n\n`;
+    const imp = data.get("impacto");
+    if (imp?.trim()) t += `**Áreas Impactadas**: ${imp}\n\n`;
+    const info = data.get("infoRelevante");
+    if (info?.trim()) t += `**Informações Relevantes**: ${info}\n\n`;
+
+    if (document.getElementById("chkBanco").checked) {
+      const tipoBanco = data.get("tipoBanco");
+      const script    = data.get("scriptMigracao");
+      const obsBanco  = data.get("obsBanco");
+      t += `**Alteração no Banco de Dados**:\n`;
+      if (tipoBanco) t += `- Tipo: ${tipoBanco}\n`;
+      if (script)    t += `- Script de migração: ${script}\n`;
+      if (obsBanco?.trim()) t += `- Observações: ${obsBanco}\n`;
+      t += "\n";
+    }
+
+    const scenarioItems = document.querySelectorAll(".scenario-item");
+    if (scenarioItems.length > 0) {
+      t += `**Cenários Testados**:\n\n`;
+      t += `| # | Instância | Banco de Dados | Filtro | Competência | Resultado |\n`;
+      t += `|---|-----------|----------------|--------|-------------|----------|\n`;
+      scenarioItems.forEach((el, idx) => {
+        const n = el.id.replace("scenario-", "");
+        const inst  = data.get(`cenario_instancia_${n}`)  || "-";
+        const banco = data.get(`cenario_banco_${n}`)       || "-";
+        const filtro= data.get(`cenario_filtro_${n}`)      || "-";
+        const comp  = data.get(`cenario_competencia_${n}`) || "-";
+        const res   = data.get(`cenario_resultado_${n}`)   || "-";
+        t += `| ${idx+1} | ${inst} | ${banco} | ${filtro} | ${comp} | ${res} |\n`;
+      });
+      t += "\n";
+    }
+
+    if (document.getElementById("chkConfig").checked) {
+      const cfg = data.get("configAlterada");
+      if (cfg?.trim()) t += `**Alterações de Configuração**: ${cfg}\n\n`;
+    }
+    if (document.getElementById("chkIntegracao").checked) {
+      const qual = data.get("qualIntegracao");
+      const imp2 = data.get("impactoIntegracao");
+      t += `**Integração Externa Afetada**: ${qual || "-"}\n`;
+      if (imp2?.trim()) t += `  Impacto: ${imp2}\n`;
+      t += "\n";
+    }
+    if (document.getElementById("chkPerformance").checked) {
+      const perf = data.get("impactoPerformance");
+      if (perf?.trim()) t += `**Impacto em Performance**: ${perf}\n\n`;
+    }
+
+    const origemBug = data.get("origemBug");
+    if (origemBug?.trim()) t += `**Task que originou o bug**: ${origemBug}\n\n`;
+    const escopo = data.get("escopoAlterado");
+    if (escopo?.trim()) t += `**Alteração de Escopo**: ${escopo}\n\n`;
+    const riscos = data.get("riscos");
+    if (riscos?.trim()) t += `**Riscos**: ${riscos}\n\n`;
+    const rollback = data.get("rollback");
+    if (rollback?.trim()) t += `**Plano de Rollback**: ${rollback}\n\n`;
 
     if (data.get("docAtualizada") === "Sim")
-      texto += `**Documentação atualizada por**: ${data.get("responsavelDoc")}\n\n`;
+      t += `**Documentação atualizada por**: ${data.get("responsavelDoc") || "-"}\n\n`;
 
-    if (data.get("riscos"))
-      texto += `**Riscos**: ${data.get("riscos")}\n\n`;
+    const evidencias = data.get("evidencias");
+    if (evidencias?.trim()) t += `**Evidências de Teste**: ${evidencias}\n\n`;
 
-    if (data.get("cenariosQa"))
-      texto += `**Cenários para o QA**: ${data.get("cenariosQa")}\n\n`;
-
+    const checklist = data.getAll("checklist");
     if (checklist.length > 0) {
-      texto += `**Itens do Checklist**:\n`;
-      checklist.forEach(item => texto += `- ${item}\n`);
+      t += `**Checklist Final**:\n`;
+      checklist.forEach(item => t += `- ✅ ${item}\n`);
     }
 
-    return texto;
+    return t.trim();
   }
 
-	function copiarParaClipboard() {
-	  const form = document.getElementById("checklistForm");
-	  const data = new FormData(form);
-	  try {
-		const texto = montarTextoComentario(data);
-		navigator.clipboard.writeText(texto)
-		  .then(() => alert("Informações copiadas para a memória!"))
-		  .catch(err => alert("Erro ao copiar: " + err));
-	  } catch (err) {
-		alert(err.message);
-	  }
-	}
-
-  async function enviarParaAzure() {
-    const form = document.getElementById("checklistForm");
-    const data = new FormData(form);
-
-    const id = parseInt(data.get("taskId"));
-    const texto = montarTextoComentario(data);
-    const usuario = data.get("dev");
-
-    if (!id || !texto || !usuario) {
-      alert("Preencha todos os campos obrigatórios antes de enviar.");
-      return;
-    }
-
-    const body = JSON.stringify({ id, texto, usuario });
-
+  function copiarParaClipboard() {
+    const data = new FormData(document.getElementById("checklistForm"));
     try {
-      const response = await fetch("https://producao4.theos.com.br/eclesialtheossystem/api/v1/Integracao/addcomments/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body
-      });
-
-      if (response.ok) {
-        alert("Comentário enviado com sucesso para o Azure!");
-      } else {
-        const erro = await response.text();
-        alert("Erro ao enviar para Azure:\n" + erro);
-      }
+      const texto = montarTextoComentario(data);
+      navigator.clipboard.writeText(texto)
+        .then(() => showToast("✓ Copiado para a área de transferência!"))
+        .catch(err => showToast("⚠ Erro ao copiar: " + err));
     } catch (err) {
-      alert("Erro na comunicação com o servidor:\n" + err.message);
-    }
-  }
-  
-  async function melhorarTextoIA(campo) {
-    const textoOriginal = campo.value;
-    if (!textoOriginal.trim()) {
-      alert("Preencha o campo antes de melhorar o texto.");
-      return;
-    }
-
-    const prompt = `
-Você é um assistente que melhora descrições técnicas de forma clara e profissional.
-Melhore o seguinte texto, mantendo o significado original:
-
-"${textoOriginal}"
-`;
-    try {
-      const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBmfknVry2JbRjkT3rInKtPYl4NdKbmsAI", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: prompt }]
-            }
-          ]
-        })
-      });
-
-      if (!response.ok) {
-        alert("Erro ao se comunicar com a IA. Código: " + response.status);
-        return;
-      }
-
-      const result = await response.json();
-      const textoMelhorado = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-      if (textoMelhorado) {
-        campo.value = textoMelhorado.trim();
-      } else {
-        alert("A IA não retornou um texto válido.");
-      }
-    } catch (err) {
-      alert("Erro: " + err.message);
+      showToast("⚠ " + err.message);
     }
   }
 </script>
-
 </body>
 </html>
