@@ -860,6 +860,19 @@
             </div>
           </div>
         </div>
+
+        <label class="toggle-row" id="toggleHardcoded" for="chkHardcoded">
+          <div class="switch"><input type="checkbox" id="chkHardcoded"><div class="switch-track"></div><div class="switch-thumb"></div></div>
+          <span class="toggle-label">Há dados hardcoded no código?</span>
+        </label>
+        <div id="divHardcoded" class="collapsible">
+          <div class="collapsible-inner">
+            <div class="field">
+              <label class="field-label">Quais valores hardcoded foram identificados?</label>
+              <textarea name="dadosHardcoded" rows="2" placeholder="Ex: URL de ambiente, ID fixo, valor numérico sem constante, etc."></textarea>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -934,14 +947,18 @@
     "Testes manuais realizados",
     "Impacto analisado",
     "Validação com dados reais",
-    "Sem conflitos de merge pendentes",
     "Script de banco gerado/aplicado",
     "Testado em mais de um ambiente",
     "Logs relevantes adicionados",
-    "Nenhum dado hardcoded",
     "Permissionamento revisado (novo item de menu)",
     "QA informado",
   ];
+
+  // Embaralha os itens a cada carregamento de página
+  for (let i = checklistItems.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [checklistItems[i], checklistItems[j]] = [checklistItems[j], checklistItems[i]];
+  }
 
   const grid = document.getElementById("checklistGrid");
   checklistItems.forEach(item => {
@@ -991,6 +1008,7 @@
   bindSwitch("chkBug",         "divBug",         "toggleBug");
   bindSwitch("chkEscopo",      "divEscopo",      "toggleEscopo");
   bindSwitch("chkRiscos",      "divRiscos",      "toggleRiscos");
+  bindSwitch("chkHardcoded",   "divHardcoded",   "toggleHardcoded");
 
   document.getElementById("selDoc").addEventListener("change", function() {
     document.getElementById("divResponsavelDoc").classList.toggle("open", this.value === "Sim");
@@ -1153,11 +1171,20 @@
     const evidencias = data.get("evidencias");
     if (evidencias?.trim()) t += `**Evidências de Teste**: ${evidencias}\n\n`;
 
-    const checklist = data.getAll("checklist");
-    if (checklist.length > 0) {
-      t += `**Checklist Final**:\n`;
-      checklist.forEach(item => t += `- ✅ ${item}\n`);
+    if (document.getElementById("chkHardcoded").checked) {
+      const hardcoded = data.get("dadosHardcoded");
+      if (hardcoded?.trim()) t += `**Dados Hardcoded Identificados**: ${hardcoded}\n\n`;
     }
+
+    const checkedItems = data.getAll("checklist");
+    t += `**Checklist Final**:\n`;
+    checklistItems.forEach(item => {
+      if (checkedItems.includes(item)) {
+        t += `✅ ${item}\n`;
+      } else {
+        t += `❌ ${item}\n`;
+      }
+    });
 
     return t.trim();
   }
