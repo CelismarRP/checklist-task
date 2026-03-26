@@ -631,12 +631,42 @@
             <label class="field-label">Tipo da Tarefa <span class="tag-req">obrigatório</span></label>
             <select name="tipoTarefa" required>
               <option value="">Selecione...</option>
-              <option value="Feature">✨ Feature</option>
-              <option value="Correção de Bug">🐛 Correção de Bug</option>
-              <option value="Hotfix">🚨 Hotfix</option>
-              <option value="Refatoração">🔧 Refatoração</option>
-              <option value="Melhoria de Performance">⚡ Melhoria de Performance</option>
-              <option value="Documentação">📄 Documentação</option>
+              <optgroup label="Desenvolvimento">
+                <option value="Feature">✨ Feature</option>
+                <option value="Melhoria">🚀 Melhoria</option>
+                <option value="Refatoração">🔧 Refatoração</option>
+                <option value="Melhoria de Performance">⚡ Melhoria de Performance</option>
+                <option value="Otimização de Query">🗄️ Otimização de Query</option>
+                <option value="Evolução de Regra de Negócio">📊 Evolução de Regra de Negócio</option>
+                <option value="Criação de API">🔌 Criação de API</option>
+              </optgroup>
+              <optgroup label="Correções">
+                <option value="Correção de Bug">🐛 Correção de Bug</option>
+                <option value="Hotfix">🚨 Hotfix</option>
+                <option value="Revert">⏪ Revert</option>
+                <option value="Correção de Dados">🧮 Correção de Dados</option>
+                <option value="Correção de Cálculo">📐 Correção de Cálculo</option>
+                <option value="Correção de Integração">🔗 Correção de Integração</option>
+              </optgroup>
+              <optgroup label="Infraestrutura">
+                <option value="Migração">🚚 Migração</option>
+                <option value="Configuração / DevOps">⚙️ Configuração / DevOps</option>
+                <option value="Ajuste de Ambiente">🌐 Ajuste de Ambiente</option>
+                <option value="Pipeline / CI-CD">🔄 Pipeline / CI-CD</option>
+              </optgroup>
+              <optgroup label="Banco de Dados">
+                <option value="Alteração Estrutural (DDL)">🧱 Alteração Estrutural (DDL)</option>
+                <option value="Migração de Dados">📦 Migração de Dados</option>
+                <option value="Correção de Script">📜 Correção de Script</option>
+                <option value="Criação de Procedure / Function">⚙️ Procedure / Function</option>
+                <option value="Indexação / Performance">📊 Indexação / Performance</option>
+              </optgroup>
+              <optgroup label="Outros">
+                <option value="Documentação">📄 Documentação</option>
+                <option value="Spike / Investigação">🔍 Spike / Investigação</option>
+                <option value="UI / UX">🎨 UI / UX</option>
+                <option value="Análise Técnica">🧠 Análise Técnica</option>
+              </optgroup>
             </select>
           </div>
           <div class="field">
