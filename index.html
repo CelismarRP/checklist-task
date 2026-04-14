@@ -1156,8 +1156,6 @@
     const scenarioItems = document.querySelectorAll(".scenario-item");
     if (scenarioItems.length > 0) {
       t += `**Cenários Testados**:\n\n`;
-      t += `| # | Instância | Banco de Dados | Filtro | Competência | Resultado |\n`;
-      t += `|---|-----------|----------------|--------|-------------|----------|\n`;
       scenarioItems.forEach((el, idx) => {
         const n = el.id.replace("scenario-", "");
         const inst  = data.get(`cenario_instancia_${n}`)  || "-";
@@ -1165,9 +1163,16 @@
         const filtro= data.get(`cenario_filtro_${n}`)      || "-";
         const comp  = data.get(`cenario_competencia_${n}`) || "-";
         const res   = data.get(`cenario_resultado_${n}`)   || "-";
-        t += `| ${idx+1} | ${inst} | ${banco} | ${filtro} | ${comp} | ${res} |\n`;
+        
+        t += `**Cenário ${idx+1}**\n\n`;
+        t += `| Campo | Valor |\n`;
+        t += `|---|---|\n`;
+        t += `| **Instância** | ${inst} |\n`;
+        t += `| **Banco de Dados** | ${banco} |\n`;
+        t += `| **Filtro** | ${filtro} |\n`;
+        t += `| **Competência** | ${comp} |\n`;
+        t += `| **Resultado** | ${res} |\n\n`;
       });
-      t += "\n";
     }
 
     if (document.getElementById("chkConfig").checked) {
