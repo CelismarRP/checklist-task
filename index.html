@@ -1235,6 +1235,28 @@
       showToast("⚠ " + err.message);
     }
   }
+  
+  // --- PROTEÇÃO CONTRA FECHAMENTO ACIDENTAL ---
+  let formAlterado = false;
+
+  // Detecta qualquer mudança nos campos do formulário
+  document.getElementById("checklistForm").addEventListener("input", function() {
+    formAlterado = true;
+  });
+
+  document.getElementById("checklistForm").addEventListener("change", function() {
+    formAlterado = true;
+  });
+
+  // Dispara o alerta do navegador ao tentar fechar/atualizar a página
+  window.addEventListener("beforeunload", function (e) {
+    if (formAlterado) {
+      // Cancela o evento padrão
+      e.preventDefault();
+      // O Chrome requer que o returnValue seja definido
+      e.returnValue = ""; 
+    }
+  });
 </script>
 </body>
 </html>
