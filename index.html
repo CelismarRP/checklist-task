@@ -711,12 +711,12 @@
       </div>
       <div class="section-body">
         <div class="field">
-          <label class="field-label">Objetivo da tarefa <span class="tag-req">obrigatório</span></label>
-          <textarea name="objetivo" rows="3" required placeholder="Descreva de forma clara e sucinta o objetivo da tarefa."></textarea>
+          <label class="field-label">Qual o problema identificado? <span class="tag-req">obrigatório</span></label>
+          <textarea name="objetivo" rows="3" required placeholder="Descreva de forma clara e sucinta o problema identificado."></textarea>
         </div>
         <div class="field">
-          <label class="field-label">Mudanças feitas no código <span class="tag-opt">(opcional)</span></label>
-          <textarea name="alteracoes" rows="3" placeholder="Mencione métodos, classes ou funções alteradas."></textarea>
+          <label class="field-label">Qual foi a solução aplicada? <span class="tag-req">obrigatório</span></label>
+          <textarea name="alteracoes" rows="3" required placeholder="Descreva de forma clara e objetiva a solução aplicada para resolver o problema identificado."></textarea>
         </div>
         <div class="field">
           <label class="field-label">Áreas do sistema impactadas <span class="tag-opt">(opcional)</span></label>
@@ -1289,7 +1289,9 @@
     const objetivo      = data.get("objetivo");
 
     if (!branchOrigem || !branchDestino) throw new Error("Selecione a Branch Origem e a Branch Destino.");
-    if (!objetivo?.trim())               throw new Error("Preencha o objetivo da tarefa.");
+    if (!objetivo?.trim())               throw new Error("Descreva o problema identificado.");
+    const alteracoes = data.get("alteracoes");
+    if (!alteracoes?.trim())           throw new Error("Descreva a solução aplicada.");
 
     let t = "";
 
@@ -1301,9 +1303,9 @@
     if (deps?.trim()) t += `**Dependências**: ${deps}\n`;
     t += "\n";
 
-    t += `**Objetivo da Tarefa**: ${objetivo}\n\n`;
+    t += `**Problema Identificado**: ${objetivo}\n\n`;
     const alt = data.get("alteracoes");
-    if (alt?.trim()) t += `**Alterações no Código**: ${alt}\n\n`;
+    t += `**Solução Aplicada**: ${alt}\n\n`;
     const imp = data.get("impacto");
     if (imp?.trim()) t += `**Áreas Impactadas**: ${imp}\n\n`;
     const info = data.get("infoRelevante");
